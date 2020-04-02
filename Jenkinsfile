@@ -1,14 +1,6 @@
 pipeline{
     agent any
-    
-    stages{
-        
-        stage('SCM checkout'){
-            steps{
-                git 'https://github.com/sachinshrma/spring-petclinic'
-            }
-        }
-        
+    stages{    
         stage('Build'){
             steps{
                 sh './mvnw package'
@@ -22,8 +14,6 @@ pipeline{
                 sh 'docker push sachinshrma/petclinic:1.0.0'
                 }
             }
-        }
-    
-    }
-    
+        }    
+    }    
 }
