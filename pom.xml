@@ -30,6 +30,12 @@
     <jacoco.version>0.8.5</jacoco.version>
     <nohttp-checkstyle.version>0.0.4.RELEASE</nohttp-checkstyle.version>
     <spring-format.version>0.0.20</spring-format.version>
+      
+    <!-- Sonarcloud -->
+    <sonar.projectKey>org.springframework.samples:spring-petclinic-github</sonar.projectKey>
+    <sonar.organization>devops-rd</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.login>25b2dab55ad075752550f51c4d597b37329a5c2b</sonar.login>
   </properties>
 
   <dependencies>
