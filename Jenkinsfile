@@ -6,6 +6,11 @@ pipeline{
                 sh './mvnw package'
             }
         }
+        stage('Sonarcloud'){
+            steps{
+                sh './mvnw verify sonar:sonar'
+            }
+        }
         stage('Deploy'){
             steps{
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'password', usernameVariable: 'username')]) {
@@ -14,6 +19,6 @@ pipeline{
                 sh 'docker push sachinshrma/petclinic:1.0.0'
                 }
             }
-        }    
+        }
     }    
 }
