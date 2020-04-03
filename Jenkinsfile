@@ -6,7 +6,7 @@ pipeline{
                 sh './mvnw package'
             }
         }
-        stage('Sonarcloud'){
+        stage('Code analysis'){
             steps{
                 sh './mvnw verify sonar:sonar'
             }
