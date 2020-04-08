@@ -16,11 +16,11 @@ pipeline{
         stage('Containerization'){
             steps{
                 sh 'ls'
-             //   withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'password', usernameVariable: 'username')]) {
-               // sh "docker login -u ${username} -p ${password}"
-                //sh 'docker build -t sachinshrma/petclinic:1.0.0 .'
-                //sh 'docker push sachinshrma/petclinic:1.0.0'
-                //}
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'password', usernameVariable: 'username')]) {
+                sh "docker login -u ${username} -p ${password}"
+                sh 'docker build -t sachinshrma/petclinic:1.0.0 .'
+                sh 'docker push sachinshrma/petclinic:1.0.0'
+                }
             }
         }
         stage('Deploy'){
