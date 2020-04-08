@@ -14,7 +14,7 @@ variable "tenant_id" {
   
 }
 variable "location" {
-  default = "southindia"
+  default = "westus"
 }
 output "public-ip" {
   value = ["${azurerm_public_ip.public-IP}"]
