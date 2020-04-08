@@ -9,6 +9,7 @@ pipeline{
         stage('Code analysis'){
             steps{
                 //sh './mvnw verify sonar:sonar'
+                sh 'ls'
             }
         }
         stage('Containerization'){
