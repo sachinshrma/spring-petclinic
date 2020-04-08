@@ -92,8 +92,8 @@ resource "azurerm_virtual_machine" "virtual-machine" {
   }
   os_profile {
     computer_name  = "Ubuntu"
-    admin_username = "admin"
-    admin_password = "admin@123"
+    admin_username = "prod-webapp"
+    admin_password = "prodwebapp@123"
     custom_data    = "${file("initial-boot.txt")}"
   }
    os_profile_linux_config {
