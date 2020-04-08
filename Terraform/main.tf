@@ -71,32 +71,36 @@ resource "azurerm_network_interface_security_group_association" "example" {
     network_interface_id      = azurerm_network_interface.nic.id
     network_security_group_id = azurerm_network_security_group.network-security-group.id
 }
-resource "azurerm_linux_virtual_machine" "virtual-machine" {
+resource "azurerm_virtual_machine" "virtual-machine" {
     name                  = "${var.prefix}-vm"
     location              = "${var.location}"
     resource_group_name   = "${azurerm_resource_group.resource-group.name}"
-    size                  = "Basic_A1"
-    computer_name         = "Ubuntu"
-    admin_username        = "prod-webapp"
-    admin_password        = "prodwebapp@123"
-    custom_data           = base64encode(data.template_file.linux-vm-cloud-init.rendered)
-    disable_password_authentication = false
+    vm_size               = "Basic_A1"
+    network_interface_ids = [azurerm_network_interface.nic.id]
+ 
 
-    network_interface_ids = [
-    azurerm_network_interface.nic.id,
-    ]
-    os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-    }
-    source_image_reference {
+  storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    sku       = "18.04-LTS"
     version   = "latest"
-    }
-}
-
-data "template_file" "linux-vm-cloud-init" {
-    template = file("initial-boot.sh")
+  }
+  storage_os_disk {
+    name              = "myosdisk1"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+  os_profile {
+    computer_name         = "ubuntu"
+    admin_username        = "prod-webapp"
+    admin_password        = "prodwebapp@123"
+    custom_data           = file("initial-boot.txt")
+  }
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+  tags = {
+    environment = "staging"
+  }
 }
