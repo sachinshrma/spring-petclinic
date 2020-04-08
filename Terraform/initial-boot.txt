@@ -1,0 +1,6 @@
+#cloud-config
+runcmd:
+  - curl -fsSL https://get.docker.com -o get-docker.sh
+  - sudo sh get-docker.sh
+  - docker pull sachinshrma/petclinic:1.0.0
+  - docker run -d --name webapp sachinshrma/petclinic:1.0.0
