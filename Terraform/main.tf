@@ -71,35 +71,32 @@ resource "azurerm_network_interface_security_group_association" "example" {
     network_interface_id      = azurerm_network_interface.nic.id
     network_security_group_id = azurerm_network_security_group.network-security-group.id
 }
-resource "azurerm_virtual_machine" "virtual-machine" {
-  name                  = "${var.prefix}-vm"
-  location              = "${var.location}"
-  resource_group_name   = "${azurerm_resource_group.resource-group.name}"
-  network_interface_ids = ["${azurerm_network_interface.nic.id}"]
-  vm_size               = "Basic_A1"
+resource "azurerm_linux_virtual_machine" "virtual-machine" {
+    name                  = "${var.prefix}-vm"
+    location              = "${var.location}"
+    resource_group_name   = "${azurerm_resource_group.resource-group.name}"
+    size                  = "Basic_A1"
+    computer_name         = "Ubuntu"
+    admin_username        = "prod-webapp"
+    admin_password        = "prodwebapp@123"
+    custom_data           = base64encode(data.template_file.linux-vm-cloud-init.rendered)
+    disable_password_authentication = false
 
-  storage_image_reference {
+    network_interface_ids = [
+    azurerm_network_interface.nic.id,
+    ]
+    os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    }
+    source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    sku       = "16.04-LTS"
     version   = "latest"
-  }
-  storage_os_disk {
-    name              = "ubunutuOSDisk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-  os_profile {
-    computer_name  = "Ubuntu"
-    admin_username = "prod-webapp"
-    admin_password = "prodwebapp@123"
-    custom_data    = "${file("initial-boot.sh")}"
-  }
-   os_profile_linux_config {
-    disable_password_authentication = false
-  }
-  tags = {
-    owner = "Sachin"
-  }
+    }
+}
+
+data "template_file" "linux-vm-cloud-init" {
+    template = file("initial-boot.sh")
 }
