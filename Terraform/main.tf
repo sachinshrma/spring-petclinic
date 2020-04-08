@@ -94,7 +94,7 @@ resource "azurerm_virtual_machine" "virtual-machine" {
     computer_name  = "Ubuntu"
     admin_username = "prod-webapp"
     admin_password = "prodwebapp@123"
-    custom_data    = "${file("initial-boot.txt")}"
+    custom_data    = "${file("initial-boot.sh")}"
   }
    os_profile_linux_config {
     disable_password_authentication = false
