@@ -3,19 +3,16 @@ pipeline{
     stages{    
         stage('Build'){
             steps{
-                sh 'ls'
-                //sh './mvnw package'
+                sh './mvnw package'
             }
         }
         stage('Code analysis'){
             steps{
-               // sh './mvnw verify sonar:sonar'
-                sh 'ls'
+                sh './mvnw verify sonar:sonar'
             }
         }
         stage('Containerization'){
             steps{
-                sh 'ls'
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'password', usernameVariable: 'username')]) {
                 sh "docker login -u ${username} -p ${password}"
                 sh 'docker build -t sachinshrma/petclinic:1.0.0 .'
