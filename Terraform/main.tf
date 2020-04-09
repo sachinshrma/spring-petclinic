@@ -4,6 +4,8 @@ resource "azurerm_resource_group" "resource-group" {
 }
 
 resource "azurerm_virtual_network" "virtual-network" {
+  depends_on=[azurerm_resource_group.resource-group]
+  
   name                = "${var.prefix}-vnet"
   address_space       = ["10.0.0.0/16"]
   location            = "${var.location}"
@@ -11,18 +13,24 @@ resource "azurerm_virtual_network" "virtual-network" {
 }
 
 resource "azurerm_subnet" "subnet" {
+  depends_on=[azurerm_virtual_network.virtual-network]
+  
   name                 = "${var.prefix}-snet"
   resource_group_name  = "${azurerm_resource_group.resource-group.name}"
   virtual_network_name = "${azurerm_virtual_network.virtual-network.name}"
   address_prefix       = "10.0.2.0/24"
 }
 resource "azurerm_public_ip" "public-IP" {
+    depends_on=[azurerm_resource_group.resource-group]
+  
     name                         = "${var.prefix}-pip"
     location                     = "${var.location}"
     resource_group_name          = "${azurerm_resource_group.resource-group.name}"
     allocation_method            = "Static"
 }
 resource "azurerm_network_security_group" "network-security-group" {
+    depends_on=[azurerm_resource_group.resource-group]
+  
     name                = "${var.prefix}-nsg"
     location            = "${var.location}"
     resource_group_name = "${azurerm_resource_group.resource-group.name}"
@@ -41,6 +49,8 @@ resource "azurerm_network_security_group" "network-security-group" {
 }
 
 resource "azurerm_network_security_rule" "access-webapp" {
+  depends_on=[azurerm_resource_group.resource-group,azurerm_network_security_group.network-security-group]
+  
   name = "Port_8080"
   priority = 100
   direction = "Inbound"
@@ -55,6 +65,8 @@ resource "azurerm_network_security_rule" "access-webapp" {
 }
 
 resource "azurerm_network_interface" "nic" {
+  depends_on                = [azurerm_subnet.subnet,azurerm_public_ip.public-IP]
+  
   name                      = "${var.prefix}-nic"
   location                  = "${var.location}"
   resource_group_name       = "${azurerm_resource_group.resource-group.name}"
@@ -68,10 +80,14 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 resource "azurerm_network_interface_security_group_association" "example" {
+    depends_on                = [azurerm_network_interface.nic,azurerm_network_security_group.network-security-group]
+  
     network_interface_id      = azurerm_network_interface.nic.id
     network_security_group_id = azurerm_network_security_group.network-security-group.id
 }
 resource "azurerm_virtual_machine" "virtual-machine" {
+    depends_on            = [azurerm_network_interface.nic]
+  
     name                  = "${var.prefix}-vm"
     location              = "${var.location}"
     resource_group_name   = "${azurerm_resource_group.resource-group.name}"
