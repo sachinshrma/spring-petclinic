@@ -3,23 +3,20 @@ pipeline{
     stages{    
         stage('Build'){
             steps{
-                //sh './mvnw package'
-                    sh 'ls'
+                sh './mvnw package'
             }
         }
         stage('Code analysis'){
             steps{
-                //sh './mvnw verify sonar:sonar'
-                    sh 'ls'
+                sh './mvnw verify sonar:sonar'
             }
         }
         stage('Containerization'){
             steps{
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'password', usernameVariable: 'username')]) {
-                //sh "docker login -u ${username} -p ${password}"
-                //sh 'docker build -t sachinshrma/petclinic:1.0.0 .'
-                //sh 'docker push sachinshrma/petclinic:1.0.0'
-                        sh 'ls'
+                sh "docker login -u ${username} -p ${password}"
+                sh 'docker build -t sachinshrma/petclinic:1.0.0 .'
+                sh 'docker push sachinshrma/petclinic:1.0.0'
                 }
             }
         }
