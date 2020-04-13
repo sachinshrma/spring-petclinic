@@ -33,8 +33,8 @@ pipeline{
             }
         }
     }
-    post {
-        always {
+    stage('Email Notification') {
+        steps {
 			emailext (
                 to: "sachinsharma9998@gmail.com",
                 subject: '${DEFAULT_SUBJECT}',
