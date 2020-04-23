@@ -1,4 +1,5 @@
 pipeline{
+def imageVersion="1.0.${BUILD_NUMBER}"
     agent any
     stages{    
         stage('Build'){
@@ -15,8 +16,10 @@ pipeline{
             steps{
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'password', usernameVariable: 'username')]) {
                 sh "docker login -u ${username} -p ${password}"
-                sh 'docker build -t sachinshrma/petclinic:1.0.0 .'
-                sh 'docker push sachinshrma/petclinic:1.0.0'
+                sh "docker build -t sachinshrma/petclinic:${imageVersion} ."
+                sh 'docker build -t sachinshrma/petclinic:latest .'
+                sh "docker push sachinshrma/petclinic:${imageVersion}"
+                sh 'docker push sachinshrma/petclinic:latest'
                 }
             }
         }
@@ -26,10 +29,11 @@ pipeline{
                     dir('Terraform') {
                         sh 'terraform init -input=false'
                        // sh 'terraform destroy -var="subscription_id=${subscription_id}" -var="client_id=${client_id}" -var="client_secret=${client_secret}" -var="tenant_id=${tenant_id}" -input=false -auto-approve'
-                        sh 'terraform apply -var="prefix=prod${BUILD_NUMBER}" -var="subscription_id=${subscription_id}" -var="client_id=${client_id}" -var="client_secret=${client_secret}" -var="tenant_id=${tenant_id}" -input=false -auto-approve'
-                        sh 'terraform output'
+                        sh 'terraform apply -var="prefix=prod" -var="subscription_id=${subscription_id}" -var="client_id=${client_id}" -var="client_secret=${client_secret}" -var="tenant_id=${tenant_id}" -input=false -auto-approve'
+                       // sh 'terraform output'
                     }
                 }
+                sh "kubectl set image deployment/petclinic-app webapp=sachinshrma/petclinic:${imageVersion}"
             }
         }
     }
