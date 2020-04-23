@@ -1,6 +1,6 @@
-pipeline{
 def imageVersion="1.0.${BUILD_NUMBER}"
-    agent any
+pipeline{
+    agent {label slave_agent}
     stages{    
         stage('Build'){
             steps{
